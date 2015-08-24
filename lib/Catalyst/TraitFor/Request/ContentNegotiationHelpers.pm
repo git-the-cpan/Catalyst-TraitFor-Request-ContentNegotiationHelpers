@@ -37,7 +37,7 @@ sub choose_media_type {
 
 sub accepts_media_type {
   my $self = shift;
-  return $self->choose_media_type(@_) ? 1:0;
+  return map { $self->choose_media_type($_) } @_;
 }
 
 sub on_best_media_type {
@@ -135,6 +135,11 @@ In a controller:
       $c->res->body($body);
     }
 
+    sub filter : Local {
+      my ($self, $c) = @_;
+      my @acceptable = $c->req->accepts_media_type('image/jpeg', 'text/html', 'text/plain');
+    }
+
 
 =head1 DESCRIPTION
 
@@ -166,10 +171,24 @@ Given an array of possible media types ('application/json', 'text/html', etc.)
 return the one that is the best match for the current request (by looking at the
 current request ACCEPT header, parsing it and comparing).
 
-=head2 accepts_media_type ($type)
+  my $best_type = $c->req->accepts_media_type('image/jpeg', 'text/html', 'text/plain');
 
-Given a string type that is a media type (text/html, application/json) returns true
-if that type is acceptable to the requesting client.
+Returns undefined if no types match.
+
+=head2 accepts_media_type ($type | @types)
+
+For each media type passed as in a list of arguments, return that media type IF
+the type is acceptable to the requesting client.  Can be used in boolean context
+to determine if a single or list of types is acceptable or as a filter to permit
+on those types that are acceptable:
+
+    if($c->req->accepts_media_type('application/json')) {
+      # handle JSON
+    }
+
+    my @acceptable = $c->req->accepts_media_type('image/jpeg', 'text/html', 'text/plain');
+
+If nothing is acceptable an undef will be returned.
 
 =head2 on_best_media_type (%callbacks)
 
@@ -196,8 +215,7 @@ return the one that is the best match for the current request.
 
 =head2 accepts_language ($type)
 
-Given a string type that is a language string returns true
-if that is acceptable to the requesting client.
+Like L</accepts_media_type> but for request language.
 
 =head2 on_best_language (%callbacks)
 
@@ -210,8 +228,7 @@ return the one that is the best match for the current request.
 
 =head2 accepts_charset ($type)
 
-Given a string type that is a charset string returns true
-if that is acceptable to the requesting client.
+Like L</accepts_media_type> but for request character set.
 
 =head2 on_best_charset (%callbacks)
 
@@ -224,8 +241,7 @@ return the one that is the best match for the current request.
 
 =head2 accepts_encoding ($type)
 
-Given a string type that is an encoding string returns true
-if that is acceptable to the requesting client.
+Like L</accepts_media_type> but for request encoding.
 
 =head2 on_best_encoding (%callbacks)
 

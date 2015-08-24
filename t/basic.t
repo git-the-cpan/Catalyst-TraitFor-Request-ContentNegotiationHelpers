@@ -20,6 +20,8 @@ BEGIN {
 
     Test::Most::is($c->req->choose_media_type('text/html','application/json'), 'application/json');
     Test::Most::ok($c->req->accepts_media_type('application/json'));
+    Test::Most::is_deeply([$c->req->accepts_media_type('application/json')], ['application/json'], 'filtered ACCEPT');
+
     Test::Most::ok(not $c->req->accepts_media_type('text/html'));
 
     my $body = $c->req->on_best_media_type(
