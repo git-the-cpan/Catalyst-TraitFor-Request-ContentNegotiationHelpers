@@ -17,14 +17,16 @@ my %WriteMakefileArgs = (
   "NAME" => "Catalyst::TraitFor::Request::ContentNegotiationHelpers",
   "PREREQ_PM" => {
     "HTTP::Headers::ActionPack" => "0.09",
-    "Moose" => "2.1403"
+    "Moose" => "2.1403",
+    "Plack::MIME" => 0,
+    "Scalar::Util" => 0
   },
   "TEST_REQUIRES" => {
     "Catalyst::Test" => 0,
     "HTTP::Request::Common" => 0,
     "Test::Most" => "0.34"
   },
-  "VERSION" => "0.005",
+  "VERSION" => "0.006",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -36,6 +38,8 @@ my %FallbackPrereqs = (
   "HTTP::Headers::ActionPack" => "0.09",
   "HTTP::Request::Common" => 0,
   "Moose" => "2.1403",
+  "Plack::MIME" => 0,
+  "Scalar::Util" => 0,
   "Test::Most" => "0.34"
 );
 
